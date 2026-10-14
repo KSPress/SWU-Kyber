@@ -40,6 +40,15 @@ Saves live in the browser. Chrome, Edge, Firefox and Safari with WebGL 2 work.
 > Keep the zip private: it contains Lucasfilm/FFG card art and text. Don't attach
 > it to a public GitHub release or host it on GitHub Pages.
 
+## Android app
+`python -I tools/android/build_android.py` builds a signed `build/android/swu_kyber.apk`
+(Android 7.0+, 64-bit, no permissions, plays offline). It needs a local JDK 17 +
+Android SDK in the git-ignored `tools/android-sdk/` (see the script). Sideload it:
+copy it to the phone, or run the web launcher with `--lan` and open
+`http://<PC address>:8060/SWU-Kyber.apk` on the phone, then allow
+"install unknown apps" for your browser. Keep `kyber-release.keystore`: updates
+must be signed with the same key. The APK contains card art, so keep it private.
+
 ## Setup
 Requirements: Godot 4.7 (tested 4.7.2, with export templates for web builds), Python 3.9+ (stdlib only).
 

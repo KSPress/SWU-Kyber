@@ -33,3 +33,6 @@ game/tests/*.json
 
 # Claude Code local config
 .claude/
+
+# local Android toolchain (JDK + SDK), not part of the repo
+tools/android-sdk/

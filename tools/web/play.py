@@ -35,7 +35,8 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 
 class Handler(http.server.SimpleHTTPRequestHandler):
     extensions_map = {**http.server.SimpleHTTPRequestHandler.extensions_map,
-                      ".wasm": "application/wasm", ".pck": "application/octet-stream", ".js": "text/javascript"}
+                      ".wasm": "application/wasm", ".pck": "application/octet-stream", ".js": "text/javascript",
+                      ".apk": "application/vnd.android.package-archive"}
 
     def __init__(self, *a, **kw):
         super().__init__(*a, directory=ROOT, **kw)
