@@ -1,0 +1,35 @@
+# --- Godot ---
+game/.godot/
+tools/godot_tool/.godot/
+build/
+
+# --- IP-bearing assets: never commit (spec section 1) ---
+# Card DB + converted art + fonts + UI art + audio live here, regenerated locally.
+game/ip/
+# Raw SWU-DB dump and art
+swu_data/
+# Reference images, fonts and art dropped in the repo root
+/*.jpg
+/*.jpeg
+/*.png
+/*.webp
+/aurebesh_english/
+/aurebesh_english.zip
+# Generated coverage report quotes card text
+docs/coverage_report.md
+
+# --- misc ---
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+docs/card_audit.md
+# reference sheets / archives dropped in the root
+/Untitled design*/
+/*.zip
+/*.webp
+# local test output
+game/tests/*.json
+
+# Claude Code local config
+.claude/

@@ -1,0 +1,44 @@
+{
+  "_comment": "Background fly-by ships. Files live in res://ip/ui/ships/<file>.png (built by tools/godot_tool/build_assets.gd). heading = direction the nose points in the image, degrees (0 right, 90 down, 180 left, -90 up). kind: fighter (quick pass) | capital (slow crawl).",
+  "factions": {
+    "rebel": [
+      {"file": "rebel_xwing", "heading": -20, "kind": "fighter"},
+      {"file": "rebel_xwing_top", "heading": -90, "kind": "fighter"},
+      {"file": "rebel_ywing", "heading": -20, "kind": "fighter"},
+      {"file": "rebel_awing", "heading": -22, "kind": "fighter"},
+      {"file": "rebel_bwing", "heading": 68, "kind": "fighter"},
+      {"file": "rebel_tantive", "heading": 18, "kind": "capital"}
+    ],
+    "imperial": [
+      {"file": "imperial_tie", "heading": 180, "kind": "fighter"},
+      {"file": "imperial_interceptor", "heading": 180, "kind": "fighter"},
+      {"file": "imperial_stardestroyer", "heading": 168, "kind": "capital"}
+    ],
+    "first order": [
+      {"file": "firstorder_silencer", "heading": 180, "kind": "fighter"},
+      {"file": "imperial_tie", "heading": 180, "kind": "fighter"},
+      {"file": "imperial_stardestroyer", "heading": 168, "kind": "capital"}
+    ],
+    "republic": [
+      {"file": "republic_arc170", "heading": -25, "kind": "fighter"},
+      {"file": "republic_arc170_top", "heading": 0, "kind": "fighter"},
+      {"file": "republic_venator", "heading": 158, "kind": "capital"}
+    ],
+    "separatist": [
+      {"file": "separatist_vulture", "heading": -18, "kind": "fighter"},
+      {"file": "separatist_trifighter", "heading": 180, "kind": "fighter"},
+      {"file": "separatist_frigate", "heading": 35, "kind": "capital"}
+    ]
+  },
+  "trait_to_faction": {
+    "rebel": "rebel", "resistance": "rebel", "new republic": "rebel", "spectre": "rebel",
+    "imperial": "imperial", "first order": "first order",
+    "republic": "republic", "clone": "republic", "jedi": "republic",
+    "separatist": "separatist"
+  },
+  "planets": ["dathomir", "kessel", "tatooine", "geonosis", "felucia", "kuat", "kuat_ring", "nar_shaddaa", "kamino", "mustafar"],
+  "theme_planet": {
+    "tatooine": "tatooine", "dathomir": "dathomir", "yavin": "felucia", "coruscant": "nar_shaddaa",
+    "kessel": "kessel", "mustafar": "mustafar", "geonosis": "geonosis", "kamino": "kamino"
+  }
+}

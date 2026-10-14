@@ -1,0 +1,1112 @@
+{
+  "episode": 4,
+  "title": "A New Hope",
+  "roman": "IV",
+  "alignment": "heroism",
+  "crawl": "It is a period of civil war. Rebel spaceships have won their first victory against the evil Galactic Empire. Two droids carrying stolen plans land on the desert world of Tatooine...",
+  "chapters": [
+    {
+      "id": "ep4_ch1_tatooine",
+      "episode": 4,
+      "number": 1,
+      "title": "Tatooine",
+      "intro": "R2-D2 and C-3PO crash-land in the Dune Sea. The plans must reach Obi-Wan Kenobi. Tusken Raiders roam the wastes.",
+      "alignment": "heroism",
+      "ruleset": "campaign",
+      "board_theme": "tatooine",
+      "leader_options": [
+        "SEC_015"
+      ],
+      "base_sequence": [
+        "HMW_019",
+        "HMW_028",
+        "HMW_032"
+      ],
+      "base_hp_override": 18,
+      "starting_deck": [
+        "SOR_236",
+        "HMW_208",
+        "HMW_208",
+        "SOR_095",
+        "SOR_095",
+        "SOR_239",
+        "SOR_239",
+        "LAW_180",
+        "LAW_180",
+        "LAW_254",
+        "HMW_167",
+        "SOR_046",
+        "SOR_073",
+        "SOR_172",
+        "SOR_124"
+      ],
+      "reward_pool": [
+        "SOR_205",
+        "HMW_268",
+        "HMW_222",
+        "JTL_214",
+        "SEC_250",
+        "LAW_146",
+        "SOR_218",
+        "SOR_216",
+        "SOR_220",
+        "HMW_217",
+        "LAW_165",
+        "SOR_169",
+        "LOF_249",
+        "SOR_238",
+        "HMW_269",
+        "HMW_258"
+      ],
+      "treasures": [
+        "kyber_shard",
+        "moisture_vaporator",
+        "ben_s_lightsaber",
+        "jawa_salvage"
+      ],
+      "unlocks_on_clear": [
+        "SEC_015",
+        "HMW_019",
+        "HMW_028",
+        "HMW_032",
+        "HMW_261",
+        "HMW_170",
+        "IBH_046"
+      ],
+      "next_chapter": "ep4_ch2_deathstar",
+      "map": {
+        "rows": [
+          [
+            "n1",
+            "n2"
+          ],
+          [
+            "n3",
+            "n4"
+          ],
+          [
+            "n5",
+            "n6"
+          ],
+          [
+            "n7"
+          ],
+          [
+            "rest"
+          ],
+          [
+            "boss"
+          ]
+        ],
+        "edges": {
+          "n1": [
+            "n3",
+            "n4"
+          ],
+          "n2": [
+            "n4"
+          ],
+          "n3": [
+            "n5"
+          ],
+          "n4": [
+            "n5",
+            "n6"
+          ],
+          "n5": [
+            "n7"
+          ],
+          "n6": [
+            "n7"
+          ],
+          "n7": [
+            "rest"
+          ],
+          "rest": [
+            "boss"
+          ]
+        }
+      },
+      "nodes": [
+        {
+          "id": "n1",
+          "type": "fight",
+          "title": "Sand People Ambush",
+          "desc": "Tusken Raiders strike from the dunes.",
+          "objective": {
+            "type": "standard"
+          },
+          "base": "HMW_019",
+          "arenas": [
+            "ground"
+          ],
+          "enemy": {
+            "name": "Tusken Raiders",
+            "hero_skin": "tusken",
+            "ai_profile": "aggressive",
+            "hp": 10,
+            "base": "KYB_004",
+            "deck": [
+              "HMW_224",
+              "HMW_224",
+              "HMW_224",
+              "HMW_181",
+              "ASH_213",
+              "ASH_213",
+              "ASH_213",
+              "HMW_179",
+              "HMW_224",
+              "ASH_213",
+              "HMW_181",
+              "HMW_179"
+            ]
+          },
+          "reward_tier": 1
+        },
+        {
+          "id": "n2",
+          "type": "event",
+          "title": "The Sandcrawler",
+          "desc": "Jawas haul you aboard their sandcrawler. Utinni!",
+          "event": {
+            "choices": [
+              {
+                "label": "Trade with the Jawas",
+                "result": "Gain Jawa Scavenger and Offworld Jawa.",
+                "effect": {
+                  "add_cards": [
+                    "SOR_205",
+                    "HMW_268"
+                  ]
+                }
+              },
+              {
+                "label": "Patch up R2 (+4 base HP this chapter)",
+                "result": "Repairs complete.",
+                "effect": {
+                  "base_hp_bonus": 4
+                }
+              },
+              {
+                "label": "Slip away",
+                "result": "You remove a card from your deck.",
+                "effect": {
+                  "remove_card": 1
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "n3",
+          "type": "objective",
+          "title": "Luke Is Down",
+          "desc": "Luke lies unconscious in the Jundland Wastes. Keep him alive for 3 rounds until Ben's krayt call scatters the Tuskens.",
+          "objective": {
+            "type": "defend_unit",
+            "params": {
+              "protect_unit": "HMW_208",
+              "rounds": 3,
+              "reward_mult": 1.5
+            }
+          },
+          "base": "HMW_028",
+          "arenas": [
+            "ground"
+          ],
+          "player_preplaced": [
+            {
+              "id": "HMW_261",
+              "arena": "ground",
+              "ready": true
+            }
+          ],
+          "claimable_tokens": [
+            "initiative",
+            "krayt_call"
+          ],
+          "pickup": "HMW_261",
+          "enemy": {
+            "name": "Tusken War Party",
+            "hero_skin": "tusken",
+            "ai_profile": "aggressive",
+            "hp": 14,
+            "base": "KYB_004",
+            "deck": [
+              "HMW_224",
+              "HMW_224",
+              "HMW_224",
+              "HMW_181",
+              "HMW_181",
+              "LOF_209",
+              "LOF_209",
+              "ASH_213",
+              "ASH_213",
+              "HMW_224",
+              "HMW_179",
+              "HMW_181"
+            ]
+          },
+          "reward_tier": 2
+        },
+        {
+          "id": "n4",
+          "type": "elite",
+          "title": "Bantha Riders",
+          "desc": "Heavy Tusken cavalry thunders across the Dune Sea.",
+          "objective": {
+            "type": "standard"
+          },
+          "base": "HMW_019",
+          "arenas": [
+            "ground"
+          ],
+          "enemy": {
+            "name": "Bantha Riders",
+            "hero_skin": "tusken",
+            "ai_profile": "aggressive",
+            "hp": 14,
+            "base": "KYB_004",
+            "deck": [
+              "HMW_181",
+              "HMW_181",
+              "HMW_181",
+              "HMW_224",
+              "HMW_224",
+              "LOF_209",
+              "LOF_209",
+              "HMW_230",
+              "ASH_213",
+              "ASH_213",
+              "HMW_179",
+              "HMW_224"
+            ]
+          },
+          "reward_tier": 3
+        },
+        {
+          "id": "n5",
+          "type": "fight",
+          "title": "Womp Rat Canyon",
+          "desc": "Beggar's Canyon is crawling with womp rats. Hold out for 4 rounds.",
+          "objective": {
+            "type": "survive_n",
+            "params": {
+              "rounds": 4
+            }
+          },
+          "base": "HMW_028",
+          "arenas": [
+            "ground"
+          ],
+          "enemy": {
+            "name": "Womp Rats",
+            "hero_skin": "creature",
+            "ai_profile": "aggressive",
+            "hp": 30,
+            "base": "KYB_004",
+            "deck": [
+              "ASH_213",
+              "ASH_213",
+              "ASH_213",
+              "ASH_213",
+              "HMW_179",
+              "HMW_179",
+              "HMW_179",
+              "ASH_213",
+              "ASH_213",
+              "HMW_179",
+              "SOR_164",
+              "ASH_213"
+            ]
+          },
+          "reward_tier": 1
+        },
+        {
+          "id": "n6",
+          "type": "fight",
+          "title": "Imperial Sweep",
+          "desc": "Sandtroopers search the wastes for the droids. Claim the Krayt Call if the Tuskens join in.",
+          "objective": {
+            "type": "standard"
+          },
+          "base": "HMW_028",
+          "arenas": [
+            "ground"
+          ],
+          "claimable_tokens": [
+            "initiative",
+            "plan"
+          ],
+          "enemy": {
+            "name": "Sandtroopers",
+            "hero_skin": "stormtrooper",
+            "ai_profile": "tempo",
+            "hp": 13,
+            "base": "HMW_026",
+            "deck": [
+              "SOR_128",
+              "SOR_128",
+              "SOR_128",
+              "HMW_201",
+              "LOF_232",
+              "IBH_063",
+              "IBH_063",
+              "IBH_057",
+              "IBH_057",
+              "SOR_229",
+              "SOR_128",
+              "IBH_055"
+            ]
+          },
+          "reward_tier": 2
+        },
+        {
+          "id": "n7",
+          "type": "elite",
+          "title": "The Chieftain",
+          "desc": "Hunt the Tusken war chief before the tribe overwhelms you.",
+          "objective": {
+            "type": "hunt",
+            "params": {
+              "target": "HMW_212",
+              "target_name": "The Chieftain",
+              "reward_mult": 1.5
+            }
+          },
+          "base": "HMW_028",
+          "arenas": [
+            "ground"
+          ],
+          "claimable_tokens": [
+            "initiative",
+            "krayt_call"
+          ],
+          "enemy": {
+            "name": "Tusken Tribe",
+            "hero_skin": "tusken",
+            "ai_profile": "tempo",
+            "hp": 16,
+            "base": "KYB_004",
+            "deck": [
+              "HMW_212",
+              "HMW_224",
+              "HMW_224",
+              "HMW_224",
+              "HMW_181",
+              "HMW_181",
+              "LOF_209",
+              "LOF_209",
+              "HMW_230",
+              "ASH_213",
+              "ASH_213",
+              "HMW_179"
+            ]
+          },
+          "reward_tier": 3
+        },
+        {
+          "id": "rest",
+          "type": "rest",
+          "title": "Mos Eisley Cantina",
+          "desc": "\"You will never find a more wretched hive of scum and villainy.\" Catch your breath.",
+          "rest": {
+            "options": [
+              "heal",
+              "remove_card",
+              "upgrade_hp"
+            ]
+          }
+        },
+        {
+          "id": "boss",
+          "type": "boss",
+          "title": "Mos Eisley Spaceport",
+          "desc": "Greedo, stormtroopers and scum stand between you and a ship off this rock. Han Solo and Chewbacca join the fight.",
+          "objective": {
+            "type": "standard"
+          },
+          "base": "HMW_032",
+          "arenas": [
+            "ground"
+          ],
+          "player_bonus_hand": [
+            "HMW_170",
+            "IBH_046"
+          ],
+          "enemy": {
+            "name": "Mos Eisley Scum",
+            "hero_skin": "greedo",
+            "ai_profile": "tempo",
+            "hp": 20,
+            "base": "JTL_030",
+            "preplaced": [
+              {
+                "id": "SOR_204",
+                "arena": "ground"
+              }
+            ],
+            "deck": [
+              "SOR_128",
+              "SOR_128",
+              "SOR_128",
+              "HMW_201",
+              "HMW_201",
+              "LOF_232",
+              "SOR_157",
+              "SOR_202",
+              "SHD_185",
+              "SOR_229",
+              "IBH_055",
+              "IBH_055",
+              "SOR_128",
+              "SOR_157"
+            ]
+          },
+          "reward_tier": 4
+        }
+      ]
+    },
+    {
+      "id": "ep4_ch2_deathstar",
+      "episode": 4,
+      "number": 2,
+      "title": "Death Star Rescue",
+      "intro": "Caught in a tractor beam, the Millennium Falcon is pulled into the Death Star. A princess waits in a detention block.",
+      "alignment": "heroism",
+      "ruleset": "campaign",
+      "board_theme": "deathstar",
+      "leader_options": [
+        "SOR_017",
+        "SOR_003"
+      ],
+      "base_sequence": [
+        "SOR_023"
+      ],
+      "base_hp_override": 18,
+      "starting_deck": [
+        "SOR_236",
+        "HMW_208",
+        "LOF_249",
+        "SOR_238",
+        "JTL_097",
+        "SOR_095",
+        "SOR_095",
+        "SOR_239",
+        "SOR_239",
+        "LAW_146",
+        "SOR_046",
+        "IBH_042",
+        "SOR_220",
+        "SOR_172",
+        "SOR_073"
+      ],
+      "reward_pool": [
+        "SOR_189",
+        "HMW_115",
+        "IBH_046",
+        "LAW_034",
+        "SOR_143",
+        "SOR_218",
+        "SOR_216",
+        "SOR_222",
+        "LAW_246",
+        "SOR_106",
+        "ASH_152",
+        "LAW_142"
+      ],
+      "treasures": [
+        "kyber_shard",
+        "detention_codes",
+        "ben_s_lightsaber"
+      ],
+      "unlocks_on_clear": [
+        "SOR_017",
+        "SOR_003",
+        "SOR_023",
+        "SOR_049"
+      ],
+      "next_chapter": "ep4_ch3_yavin",
+      "map": {
+        "rows": [
+          [
+            "n1",
+            "n2"
+          ],
+          [
+            "n3",
+            "n4"
+          ],
+          [
+            "rest"
+          ],
+          [
+            "boss"
+          ]
+        ],
+        "edges": {
+          "n1": [
+            "n3",
+            "n4"
+          ],
+          "n2": [
+            "n4"
+          ],
+          "n3": [
+            "rest"
+          ],
+          "n4": [
+            "rest"
+          ],
+          "rest": [
+            "boss"
+          ]
+        }
+      },
+      "nodes": [
+        {
+          "id": "n1",
+          "type": "fight",
+          "title": "Hangar Bay 327",
+          "desc": "Stormtroopers sweep the captured freighter.",
+          "objective": {
+            "type": "standard"
+          },
+          "base": "SOR_023",
+          "arenas": [
+            "ground"
+          ],
+          "claimable_tokens": [
+            "initiative",
+            "alarm"
+          ],
+          "enemy": {
+            "name": "Death Star Garrison",
+            "hero_skin": "stormtrooper",
+            "ai_profile": "tempo",
+            "hp": 10,
+            "base": "SOR_023",
+            "deck": [
+              "SOR_128",
+              "SOR_128",
+              "LAW_097",
+              "LAW_097",
+              "LAW_097",
+              "SOR_229",
+              "IBH_055",
+              "IBH_063",
+              "IBH_063",
+              "SEC_080",
+              "IBH_057",
+              "SOR_128"
+            ]
+          },
+          "reward_tier": 1
+        },
+        {
+          "id": "n2",
+          "type": "fight",
+          "title": "Trash Compactor 3263827",
+          "desc": "Something is down here with you. Survive until the droids shut the compactor down.",
+          "objective": {
+            "type": "survive_n",
+            "params": {
+              "rounds": 3
+            }
+          },
+          "base": "SOR_023",
+          "arenas": [
+            "ground"
+          ],
+          "enemy": {
+            "name": "Dianoga",
+            "hero_skin": "creature",
+            "ai_profile": "aggressive",
+            "hp": 30,
+            "base": "SOR_023",
+            "preplaced": [
+              {
+                "id": "HMW_155",
+                "arena": "ground",
+                "ready": false
+              }
+            ],
+            "deck": [
+              "HMW_179",
+              "HMW_179",
+              "ASH_213",
+              "ASH_213",
+              "ASH_213",
+              "HMW_182",
+              "HMW_179",
+              "ASH_213",
+              "ASH_213",
+              "HMW_179",
+              "ASH_213",
+              "HMW_155"
+            ]
+          },
+          "reward_tier": 2
+        },
+        {
+          "id": "n3",
+          "type": "elite",
+          "title": "Detention Block AA-23",
+          "desc": "Free the princess. The warden won't make it easy.",
+          "objective": {
+            "type": "hunt",
+            "params": {
+              "target": "SOR_035",
+              "target_name": "Lieutenant Childsen",
+              "reward_mult": 1.5
+            }
+          },
+          "base": "SOR_023",
+          "arenas": [
+            "ground"
+          ],
+          "pickup": "SOR_189",
+          "claimable_tokens": [
+            "initiative",
+            "alarm"
+          ],
+          "enemy": {
+            "name": "Detention Guards",
+            "hero_skin": "stormtrooper",
+            "ai_profile": "defensive",
+            "hp": 12,
+            "base": "SOR_023",
+            "deck": [
+              "SOR_035",
+              "SOR_229",
+              "SHD_238",
+              "LAW_097",
+              "LAW_097",
+              "LAW_097",
+              "SOR_128",
+              "SOR_128",
+              "IBH_063",
+              "IBH_063",
+              "SEC_080",
+              "SOR_128"
+            ]
+          },
+          "reward_tier": 3
+        },
+        {
+          "id": "n4",
+          "type": "fight",
+          "title": "Tractor Beam Controls",
+          "desc": "Ben slips away to disable the tractor beam. Keep the garrison busy.",
+          "objective": {
+            "type": "attrition",
+            "params": {
+              "per": 4
+            }
+          },
+          "base": "SOR_023",
+          "arenas": [
+            "ground"
+          ],
+          "enemy": {
+            "name": "Death Star Troopers",
+            "hero_skin": "stormtrooper",
+            "ai_profile": "tempo",
+            "hp": 16,
+            "base": "SOR_023",
+            "deck": [
+              "SOR_128",
+              "SOR_128",
+              "IBH_055",
+              "IBH_055",
+              "LAW_098",
+              "SEC_080",
+              "SEC_132",
+              "SEC_132",
+              "ASH_242",
+              "LOF_133",
+              "SOR_128",
+              "ASH_143"
+            ]
+          },
+          "reward_tier": 2
+        },
+        {
+          "id": "rest",
+          "type": "rest",
+          "title": "Command Room",
+          "desc": "A moment to regroup before the run to the Falcon.",
+          "rest": {
+            "options": [
+              "heal",
+              "remove_card",
+              "upgrade_hp"
+            ]
+          }
+        },
+        {
+          "id": "boss",
+          "type": "boss",
+          "title": "Duel on the Death Star",
+          "desc": "Obi-Wan faces Darth Vader. Luke's only task: survive until the Falcon is ready.",
+          "objective": {
+            "type": "survive_n",
+            "params": {
+              "rounds": 4,
+              "reward_mult": 2.0
+            }
+          },
+          "base": "SOR_023",
+          "arenas": [
+            "ground"
+          ],
+          "player_preplaced": [
+            {
+              "id": "SOR_049",
+              "arena": "ground",
+              "ready": true
+            }
+          ],
+          "enemy": {
+            "name": "Darth Vader",
+            "hero_skin": "vader",
+            "ai_profile": "aggressive",
+            "hp": 30,
+            "base": "SOR_023",
+            "leader": "SOR_007",
+            "preplaced": [
+              {
+                "id": "ASH_243",
+                "arena": "ground",
+                "ready": false
+              }
+            ],
+            "deck": [
+              "SOR_128",
+              "SOR_128",
+              "SOR_128",
+              "ASH_242",
+              "ASH_242",
+              "IBH_055",
+              "IBH_055",
+              "SOR_229",
+              "LOF_133",
+              "LOF_133",
+              "SEC_080",
+              "ASH_048",
+              "SOR_128",
+              "SOR_084"
+            ]
+          },
+          "reward_tier": 4
+        }
+      ]
+    },
+    {
+      "id": "ep4_ch3_yavin",
+      "episode": 4,
+      "number": 3,
+      "title": "Battle of Yavin",
+      "intro": "The Death Star approaches Yavin 4. Every pilot is needed for the trench run.",
+      "alignment": "heroism",
+      "ruleset": "campaign",
+      "board_theme": "space",
+      "arenas": [
+        "space"
+      ],
+      "leader_options": [
+        "JTL_012"
+      ],
+      "base_sequence": [
+        "KYB_001"
+      ],
+      "base_hp_override": 20,
+      "starting_deck": [
+        "SOR_237",
+        "SOR_237",
+        "LAW_253",
+        "LAW_253",
+        "JTL_051",
+        "JTL_051",
+        "JTL_151",
+        "IBH_024",
+        "IBH_024",
+        "SOR_141",
+        "SOR_141",
+        "SOR_241",
+        "LAW_068",
+        "JTL_095",
+        "JTL_095"
+      ],
+      "reward_pool": [
+        "SOR_044",
+        "SEC_152",
+        "ASH_153",
+        "IBH_006",
+        "JTL_095",
+        "JTL_151",
+        "LAW_189",
+        "SOR_220",
+        "SOR_172",
+        "SOR_073"
+      ],
+      "treasures": [
+        "kyber_shard",
+        "targeting_computer"
+      ],
+      "unlocks_on_clear": [
+        "JTL_012",
+        "JTL_151",
+        "LAW_068"
+      ],
+      "next_chapter": "",
+      "map": {
+        "rows": [
+          [
+            "n1",
+            "n2"
+          ],
+          [
+            "n3"
+          ],
+          [
+            "rest"
+          ],
+          [
+            "boss"
+          ]
+        ],
+        "edges": {
+          "n1": [
+            "n3"
+          ],
+          "n2": [
+            "n3"
+          ],
+          "n3": [
+            "rest"
+          ],
+          "rest": [
+            "boss"
+          ]
+        }
+      },
+      "nodes": [
+        {
+          "id": "n1",
+          "type": "fight",
+          "title": "TIE Screen",
+          "desc": "Waves of TIE fighters scramble to meet Red Squadron.",
+          "objective": {
+            "type": "standard"
+          },
+          "base": "KYB_001",
+          "arenas": [
+            "space"
+          ],
+          "enemy": {
+            "name": "TIE Squadrons",
+            "hero_skin": "tie",
+            "ai_profile": "aggressive",
+            "hp": 14,
+            "base": "KYB_003",
+            "deck": [
+              "SOR_225",
+              "SOR_225",
+              "SOR_225",
+              "IBH_075",
+              "IBH_075",
+              "IBH_075",
+              "SOR_132",
+              "SOR_132",
+              "SHD_082",
+              "SHD_082",
+              "JTL_033",
+              "SOR_225"
+            ]
+          },
+          "reward_tier": 1
+        },
+        {
+          "id": "n2",
+          "type": "fight",
+          "title": "Surface Batteries",
+          "desc": "Turbolaser towers fill the sky with fire.",
+          "objective": {
+            "type": "standard"
+          },
+          "base": "KYB_001",
+          "arenas": [
+            "space"
+          ],
+          "enemy": {
+            "name": "Death Star Defenses",
+            "hero_skin": "deathstar",
+            "ai_profile": "defensive",
+            "hp": 10,
+            "base": "KYB_003",
+            "deck": [
+              "KYB_002",
+              "SOR_225",
+              "SOR_225",
+              "SOR_225",
+              "IBH_075",
+              "IBH_075",
+              "SHD_082",
+              "JTL_033",
+              "SHD_082",
+              "SOR_225",
+              "KYB_002",
+              "IBH_075"
+            ]
+          },
+          "reward_tier": 2,
+          "claimable_tokens": [
+            "initiative",
+            "blast"
+          ]
+        },
+        {
+          "id": "n3",
+          "type": "elite",
+          "title": "Black Squadron",
+          "desc": "Vader's wingmen are on your tail.",
+          "objective": {
+            "type": "standard"
+          },
+          "base": "KYB_001",
+          "arenas": [
+            "space"
+          ],
+          "enemy": {
+            "name": "Black Squadron",
+            "hero_skin": "tie",
+            "ai_profile": "tempo",
+            "hp": 16,
+            "base": "KYB_003",
+            "deck": [
+              "SOR_231",
+              "LAW_175",
+              "LAW_175",
+              "SOR_132",
+              "SOR_132",
+              "IBH_075",
+              "IBH_075",
+              "SOR_225",
+              "SOR_225",
+              "JTL_087",
+              "SHD_082",
+              "SOR_225"
+            ]
+          },
+          "reward_tier": 3
+        },
+        {
+          "id": "rest",
+          "type": "rest",
+          "title": "Yavin 4 Hangar",
+          "desc": "Last checks before the final approach.",
+          "rest": {
+            "options": [
+              "heal",
+              "remove_card",
+              "upgrade_hp"
+            ]
+          }
+        },
+        {
+          "id": "boss",
+          "type": "boss",
+          "title": "The Trench Run",
+          "desc": "Space only. The Death Star's exhaust port is the enemy base. Vader and Tarkin stand in your way. Use the Force.",
+          "objective": {
+            "type": "standard"
+          },
+          "base": "KYB_001",
+          "arenas": [
+            "space"
+          ],
+          "claimable_tokens": [
+            "initiative",
+            "blast"
+          ],
+          "enemy": {
+            "name": "Vader & Tarkin",
+            "hero_skin": "vader",
+            "ai_profile": "tempo",
+            "hp": 12,
+            "base": "KYB_003",
+            "preplaced": [
+              {
+                "id": "SOR_231",
+                "arena": "space",
+                "ready": false
+              }
+            ],
+            "deck": [
+              "SOR_231",
+              "LAW_175",
+              "SOR_132",
+              "IBH_075",
+              "IBH_075",
+              "KYB_002",
+              "SOR_225",
+              "SOR_225",
+              "SOR_225",
+              "JTL_087",
+              "SHD_082",
+              "IBH_075",
+              "SOR_225",
+              "SHD_082"
+            ]
+          },
+          "reward_tier": 4
+        }
+      ]
+    }
+  ],
+  "treasures": {
+    "kyber_shard": {
+      "name": "Kyber Shard",
+      "desc": "+3 base HP for the rest of this chapter.",
+      "effect": {
+        "base_hp_bonus": 3
+      }
+    },
+    "moisture_vaporator": {
+      "name": "Moisture Vaporator",
+      "desc": "Start each fight with 1 extra resource.",
+      "effect": {
+        "extra_resources": 1
+      }
+    },
+    "ben_s_lightsaber": {
+      "name": "Ben's Lightsaber",
+      "desc": "Your first unit each fight enters with an Experience token.",
+      "effect": {
+        "first_unit_experience": 1
+      }
+    },
+    "jawa_salvage": {
+      "name": "Jawa Salvage",
+      "desc": "Draw 1 extra card in your opening hand.",
+      "effect": {
+        "extra_hand": 1
+      }
+    },
+    "detention_codes": {
+      "name": "Detention Codes",
+      "desc": "Start each fight with the Plan token available.",
+      "effect": {
+        "add_token": "plan"
+      }
+    },
+    "targeting_computer": {
+      "name": "Targeting Computer",
+      "desc": "Start each fight with the Blast token available.",
+      "effect": {
+        "add_token": "blast"
+      }
+    }
+  }
+}

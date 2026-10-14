@@ -1,0 +1,53 @@
+; Engine configuration file.
+; SWU Kyber (working title). Rename via autoload/kyber.gd GAME_TITLE.
+
+config_version=5
+
+[application]
+
+config/name="SWU Kyber"
+config/description="Star Wars: Unlimited rules in a fast, Hearthstone-style mobile frame. Non-commercial fan project."
+run/main_scene="res://ui/screens/boot.tscn"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+boot_splash/bg_color=Color(0.02, 0.03, 0.05, 1)
+boot_splash/show_image=false
+config/icon="res://icon.svg"
+
+[autoload]
+
+Kyber="*res://autoload/kyber.gd"
+CardDB="*res://autoload/card_db.gd"
+Art="*res://autoload/art.gd"
+Save="*res://autoload/save.gd"
+Router="*res://autoload/router.gd"
+Sfx="*res://autoload/sfx.gd"
+
+[display]
+
+window/size/viewport_width=720
+window/size/viewport_height=1280
+window/size/window_width_override=540
+window/size/window_height_override=960
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+window/handheld/orientation=6
+window/energy_saving/keep_screen_on=true
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=false
+pointing/emulate_mouse_from_touch=true
+
+[gui]
+
+common/drop_mouse_on_gui_input_disabled=true
+timers/tooltip_delay_sec=0.35
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/canvas_textures/default_texture_filter=1
+textures/vram_compression/import_etc2_astc=true
+environment/defaults/default_clear_color=Color(0.02, 0.03, 0.05, 1)
+2d/snap/snap_2d_transforms_to_pixel=false

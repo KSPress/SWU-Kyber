@@ -1,0 +1,13 @@
+{
+  "_comment": "Per-card attack animation overrides. style: saber | blaster | heavy | ship | melee. saber: blue | green | red | purple | yellow | white. Card ids only (IP-free).",
+  "cards": {
+    "HMW_208": {"style": "blaster"},
+    "LOF_249": {"style": "blaster"},
+    "SOR_236": {"style": "melee"},
+    "HMW_261": {"style": "saber", "saber": "blue"},
+    "SOR_049": {"style": "saber", "saber": "blue"},
+    "ASH_243": {"style": "saber", "saber": "red"},
+    "LAW_034": {"style": "blaster"},
+    "IBH_046": {"style": "blaster"}
+  }
+}

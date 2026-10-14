@@ -1,0 +1,100 @@
+{
+  "_comment": "Campaign-only custom cards (spec 5.7). Namespace KYB_. Never exposed in the vault or PvP. Same schema as the importer output.",
+  "cards": {
+    "KYB_001": {
+      "id": "KYB_001",
+      "set": "KYB",
+      "number": "001",
+      "name": "Great Temple",
+      "subtitle": "Yavin 4",
+      "type": "base",
+      "hp": 30,
+      "aspects": [],
+      "traits": [
+        "yavin"
+      ],
+      "text": "",
+      "art": "",
+      "theme": "yavin"
+    },
+    "KYB_002": {
+      "id": "KYB_002",
+      "set": "KYB",
+      "number": "002",
+      "name": "Death Star Turbolaser",
+      "subtitle": "Surface Battery",
+      "type": "unit",
+      "arena": "space",
+      "cost": 3,
+      "power": 2,
+      "hp": 4,
+      "aspects": [
+        "villainy"
+      ],
+      "traits": [
+        "imperial",
+        "vehicle"
+      ],
+      "unique": false,
+      "keywords": [
+        {
+          "k": "sentinel"
+        }
+      ],
+      "text": "Sentinel\nWhen Played: Deal 1 damage to a space unit.",
+      "abilities": [
+        {
+          "trigger": "when_played",
+          "text": "When Played: Deal 1 damage to a space unit.",
+          "effects": [
+            {
+              "op": "damage",
+              "n": 1,
+              "t": {
+                "s": "choose",
+                "kind": "unit",
+                "side": "enemy",
+                "arena": "space"
+              }
+            }
+          ]
+        }
+      ],
+      "art": ""
+    },
+    "KYB_003": {
+      "id": "KYB_003",
+      "set": "KYB",
+      "number": "003",
+      "name": "Exhaust Port",
+      "subtitle": "Two Meters Wide",
+      "type": "base",
+      "hp": 14,
+      "aspects": [
+        "villainy"
+      ],
+      "traits": [
+        "death star"
+      ],
+      "text": "The Death Star's only weakness.",
+      "art": "",
+      "theme": "deathstar"
+    },
+    "KYB_004": {
+      "id": "KYB_004",
+      "set": "KYB",
+      "number": "004",
+      "name": "Tusken Hunting Party",
+      "subtitle": "Sand People",
+      "type": "base",
+      "hp": 20,
+      "aspects": [],
+      "traits": [
+        "tusken"
+      ],
+      "text": "",
+      "art": "",
+      "theme": "tatooine"
+    }
+  }
+}

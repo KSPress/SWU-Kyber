@@ -1,0 +1,64 @@
+{
+  "_comment": "Spotlight Campaign tuning + content (IP-free). Card ids only.",
+  "start": {"cards": 20, "base_hp": 30, "credits": 20, "deck_min": 20},
+  "rows": [
+    {"fight": 6, "event": 2, "objective": 2},
+    {"fight": 4, "elite": 2, "shop": 2, "event": 2},
+    {"objective": 4, "fight": 4, "event": 2, "treasure": 1},
+    {"rest": 4, "fight": 3, "shop": 2},
+    {"elite": 3, "objective": 3, "fight": 3, "event": 1},
+    {"rest": 5, "shop": 3, "treasure": 2},
+    {"boss": 1}
+  ],
+  "node_titles": {
+    "fight": ["Patrol Skirmish", "Ambush at the Outpost", "Hangar Brawl", "Ridge Line Firefight", "Spaceport Standoff", "Convoy Raid", "Back-Alley Shootout"],
+    "elite": ["Elite Strike Team", "Veteran Squadron", "Warlord's Guard", "Hunter-Killer Cell"],
+    "objective": ["Mission"],
+    "boss": ["Sector Boss"],
+    "event": ["Strange Signal", "Encounter"],
+    "rest": ["Safe House"],
+    "shop": ["Black Market"],
+    "treasure": ["Hidden Cache"]
+  },
+  "perks": {
+    "kyber_core": {"name": "Kyber Core", "desc": "+5 max base HP.", "effect": {"max_hp": 5}},
+    "smugglers_stash": {"name": "Smuggler's Stash", "desc": "Start every battle with 1 extra resource.", "effect": {"extra_resources": 1}},
+    "veteran_crew": {"name": "Veteran Crew", "desc": "Your first unit each battle enters with an Experience token.", "effect": {"first_unit_experience": 1}},
+    "deflector_array": {"name": "Deflector Array", "desc": "Your first unit each battle enters with a Shield token.", "effect": {"first_unit_shield": 1}},
+    "intel_network": {"name": "Intel Network", "desc": "Draw 1 extra card in your opening hand.", "effect": {"extra_hand": 1}},
+    "battle_plans": {"name": "Battle Plans", "desc": "The Plan token is available in every battle.", "effect": {"add_token": "plan"}},
+    "orbital_strike": {"name": "Orbital Strike", "desc": "The Blast token is available in every battle.", "effect": {"add_token": "blast"}},
+    "bacta_tanks": {"name": "Bacta Tanks", "desc": "Heal 3 base damage after every victory.", "effect": {"heal_after_win": 3}},
+    "bounty_license": {"name": "Bounty License", "desc": "+50% credits from battles.", "effect": {"credit_mult": 0.5}},
+    "kyber_crystal": {"name": "Kyber Crystal", "desc": "Your Force token starts in play every battle.", "effect": {"start_force": 1}}
+  },
+  "events": [
+    {"id": "smuggler", "title": "Smuggler's Offer", "desc": "A Corellian smuggler offers a crate of 'misplaced' cargo — for a price.", "choices": [
+      {"label": "Buy the crate (30 credits): gain a card from your Spotlight deck", "effect": {"credits": -30, "card_locked": 1}},
+      {"label": "Rob him blind: gain 25 credits, take 4 base damage", "effect": {"credits": 25, "damage": 4}},
+      {"label": "Walk away", "effect": {}}]},
+    {"id": "jawas", "title": "Jawa Traders", "desc": "Utinni! A sandcrawler full of salvage rolls up beside you.", "choices": [
+      {"label": "Trade away a card (remove one from your deck) for 20 credits", "effect": {"remove_card": 1, "credits": 20}},
+      {"label": "Buy salvage (15 credits): gain a random loot card", "effect": {"credits": -15, "card_loot": 1}},
+      {"label": "Leave", "effect": {}}]},
+    {"id": "derelict", "title": "Derelict Freighter", "desc": "A dead freighter drifts in the shipping lane. Something still has power.", "choices": [
+      {"label": "Board it: gain a card from your Spotlight deck, take 3 base damage", "effect": {"card_locked": 1, "damage": 3}},
+      {"label": "Strip the hull for 15 credits", "effect": {"credits": 15}}]},
+    {"id": "vision", "title": "Force Vision", "desc": "The Force shows you what could be.", "choices": [
+      {"label": "Embrace it: a card in your deck gains a permanent Experience token", "effect": {"upgrade_card": "experience"}},
+      {"label": "Meditate: heal 6 base damage", "effect": {"heal": 6}}]},
+    {"id": "bounty", "title": "Bounty Board", "desc": "A Guild posting offers credits for dangerous work.", "choices": [
+      {"label": "Take the job: +40 credits, take 6 base damage", "effect": {"credits": 40, "damage": 6}},
+      {"label": "Pass", "effect": {}}]},
+    {"id": "cantina", "title": "Cantina Brawl", "desc": "Someone shot first. Chairs are flying.", "choices": [
+      {"label": "Join in: gain a random loot card, take 3 base damage", "effect": {"card_loot": 1, "damage": 3}},
+      {"label": "Slip out the back with a dropped purse (+10 credits)", "effect": {"credits": 10}}]},
+    {"id": "checkpoint", "title": "Checkpoint", "desc": "A security checkpoint blocks the route.", "choices": [
+      {"label": "Bribe the officer (25 credits)", "effect": {"credits": -25}},
+      {"label": "Blast through: take 5 base damage, gain 15 credits from the lockbox", "effect": {"damage": 5, "credits": 15}}]},
+    {"id": "holocron", "title": "Lost Holocron", "desc": "An ancient holocron hums with knowledge.", "choices": [
+      {"label": "Open it: gain a random perk, lose 5 max base HP", "effect": {"perk": "random", "max_hp": -5}},
+      {"label": "Sell it for 35 credits", "effect": {"credits": 35}}]}
+  ],
+  "prices": {"card_base": 18, "card_per_cost": 5, "card_rare": 12, "remove": 35, "heal6": 20, "upgrade": 45, "perk": 70}
+}
