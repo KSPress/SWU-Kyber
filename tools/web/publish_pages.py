@@ -45,6 +45,10 @@ def git(*a):
 
 
 git("init", "-q", "-b", "gh-pages")
+for key in ("user.name", "user.email"):   # same identity as the source repo
+    val = subprocess.run(["git", "-C", str(ROOT), "config", key], capture_output=True, text=True).stdout.strip()
+    if val:
+        git("config", key, val)
 git("add", "-A")
 git("-c", "core.autocrlf=false", "commit", "-q", "-m", f"Web app build from {rev}")
 git("push", "-q", "--force", remote, "gh-pages")
