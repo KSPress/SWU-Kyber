@@ -1,0 +1,36 @@
+{
+ "id": "./",
+ "name": "SWU Kyber",
+ "short_name": "Kyber",
+ "description": "Unofficial fan-made Star Wars: Unlimited card game.",
+ "start_url": "./index.html",
+ "scope": "./",
+ "display": "fullscreen",
+ "display_override": [
+  "fullscreen",
+  "standalone"
+ ],
+ "orientation": "any",
+ "background_color": "#05080d",
+ "theme_color": "#05080d",
+ "icons": [
+  {
+   "src": "index.144x144.png",
+   "sizes": "144x144",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "index.180x180.png",
+   "sizes": "180x180",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "index.512x512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  }
+ ]
+}
