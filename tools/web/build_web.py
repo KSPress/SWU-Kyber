@@ -3,12 +3,15 @@
 
   python -I tools/web/build_web.py [path/to/godot]
 
-Output: build/web/  - ready to host (Cloudflare Pages + Access) or run locally
-        build/SWU-Kyber-web.zip  <- contains card art/text: keep it private.
+Output: build/web/  - ready to host on GitHub Pages (tools/web/publish_pages.py)
+        or to run locally (play.py)
 
-Every file stays under 25 MiB (Cloudflare Pages' per-file limit):
-  * card art is not packed into index.pck; it ships as art/<key>.kart and the
-    game fetches it on demand (autoload/art.gd "remote" mode),
+Card art is not part of the build: the game loads each image in the player's
+browser straight from the official card image server, using the URL index
+game/data/art_urls.json (tools/web/build_art_map.py). Without that index it
+falls back to shipping art/<key>.kart files next to the page.
+The fly-by ships are left out of the web build (Web preset exclude_filter).
+Every file stays small (largest ~15 MB):
   * the engine is stored gzipped (index.wasm.gz.bin) and inflated in the browser
     by a small fetch shim (DecompressionStream: Chrome 80+, Safari 16.4+, Firefox 113+).
 Godot's own PWA output supplies the icons; the manifest and service worker are
@@ -49,10 +52,11 @@ raw = wasm.read_bytes()
 (OUT / WASM_GZ).write_bytes(gzip.compress(raw, 9, mtime=0))
 wasm.unlink()
 
-# --- art: loose files ----------------------------------------------------------
-(OUT / "art").mkdir()
-for f in ART.glob("*.kart"):
-    shutil.copy2(f, OUT / "art" / f.name)
+# --- art: official image server, or loose files as a fallback ---------------
+if not (ROOT / "game" / "data" / "art_urls.json").exists():
+    (OUT / "art").mkdir()
+    for f in ART.glob("*.kart"):
+        shutil.copy2(f, OUT / "art" / f.name)
 
 version = hashlib.sha1(raw + (OUT / "index.pck").read_bytes()).hexdigest()[:12]
 
@@ -122,7 +126,7 @@ self.addEventListener('message', (e) => { if (e.data === 'update') { self.skipWa
 function cacheFirst(cacheName, req) {
 	return caches.open(cacheName).then((c) => c.match(req, { ignoreSearch: true }).then((hit) => hit ||
 		fetch(req).then((res) => {
-			if (res.ok && res.type === 'basic') { c.put(req, res.clone()); }
+			if (res.ok && (res.type === 'basic' || res.type === 'cors')) { c.put(req, res.clone()); }
 			return res;
 		})));
 }
@@ -131,13 +135,13 @@ self.addEventListener('fetch', (e) => {
 	const req = e.request;
 	if (req.method !== 'GET') { return; }
 	const url = new URL(req.url);
-	if (url.origin !== self.location.origin) { return; }
+	if (url.origin !== self.location.origin && url.hostname !== 'cdn.starwarsunlimited.com') { return; }
 	const path = url.pathname.replace(/^.*\\//, '');
 	if (req.mode === 'navigate') {
 		// always try the network first (picks up new builds and the sign-in page)
 		e.respondWith(fetch(req).catch(() => caches.match('index.html', { ignoreSearch: true })
 			.then((r) => r || caches.match('index.offline.html'))));
-	} else if (url.pathname.includes('/art/')) {
+	} else if (url.hostname === 'cdn.starwarsunlimited.com' || url.pathname.includes('/art/')) {
 		e.respondWith(cacheFirst(ART, req));
 	} else if (FILES.includes(path)) {
 		e.respondWith(cacheFirst(CORE, req));
@@ -146,13 +150,7 @@ self.addEventListener('fetch', (e) => {
 """ % (version, json.dumps(core))
 (OUT / "index.service.worker.js").write_text(SW, encoding="utf-8")
 
-# Cloudflare Pages response headers (ignored by the local launcher)
-(OUT / "_headers").write_text(
-    "/*\n  X-Robots-Tag: noindex, nofollow\n"
-    "/index.service.worker.js\n  Cache-Control: no-cache\n"
-    "/index.html\n  Cache-Control: no-cache\n"
-    "/art/*\n  Cache-Control: public, max-age=2592000\n  Content-Type: application/octet-stream\n", encoding="utf-8")
-(OUT / "robots.txt").write_text("User-agent: *\nDisallow: /\n", encoding="utf-8")
+(OUT / ".nojekyll").write_text("", encoding="utf-8")   # GitHub Pages: serve files as-is
 
 # --- local launcher + private zip -------------------------------------------
 for f in ("play.py", "Play SWU Kyber.bat", "Play on Phone (same Wi-Fi).bat"):
@@ -163,12 +161,12 @@ for f in ("play.py", "Play SWU Kyber.bat", "Play on Phone (same Wi-Fi).bat"):
     "Windows: double-click 'Play SWU Kyber.bat'.\n"
     "Mac/Linux: run  python3 play.py  in this folder.\n"
     "Then play at http://localhost:8060 (it opens automatically).\n\n"
-    "Contains Star Wars: Unlimited card art and text (Lucasfilm Ltd. / Fantasy Flight Games).\n"
-    "For personal use only - do not upload or share publicly.\n", encoding="utf-8")
+    "Not affiliated with Disney, Lucasfilm or Fantasy Flight Games.\n"
+    "Star Wars characters, cards, logos and art are property of Disney and/or Fantasy Flight Games.\n", encoding="utf-8")
 
 big = [p for p in OUT.rglob("*") if p.is_file() and p.stat().st_size > LIMIT]
 if big:
-    sys.exit("files over 25 MiB (Cloudflare limit): " + ", ".join(f"{p.name} {p.stat().st_size / 1e6:.0f} MB" for p in big))
+    sys.exit("files over 25 MiB: " + ", ".join(f"{p.name} {p.stat().st_size / 1e6:.0f} MB" for p in big))
 zp = ROOT / "build" / "SWU-Kyber-web.zip"
 with zipfile.ZipFile(zp, "w", zipfile.ZIP_DEFLATED) as z:
     for p in OUT.rglob("*"):

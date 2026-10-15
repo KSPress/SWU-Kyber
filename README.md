@@ -22,23 +22,35 @@ through the Skywalker saga. Built with **Godot 4.7** (GL Compatibility renderer)
 - **UI** for portrait and landscape: animated menu, collection vault (search/filter/inspect), quick battle vs bot, Episode IV campaign with branching node maps, events, rest stops, rewards and treasures, and the match board with drag-to-play, drag-to-attack arrows, inspect-anything zoom, hex unit tokens and combat FX.
 - **Episode IV** fully authored: Tatooine (C-3PO), Death Star Rescue (Han or Chewbacca), Battle of Yavin (Luke, all-space).
 
-## Play in the browser
-This repository contains **code only**. The playable build needs the card art and
-text, which can't be published here, so the browser version is built locally and
-kept as a private download:
+## Play in the browser / install as an app
+The web build is an installable web app (PWA): play it in any modern browser, or
+use *Add to Home Screen* (iPhone/iPad: Safari → Share; Android: Chrome menu) to
+install it like an app. After the first visit it starts offline, and installed
+copies update themselves on the next launch after a new publish.
+
+No card art is hosted with the game: each image is loaded in the player's browser
+straight from the official card image server (the same one the official card
+database uses), so the site itself is only ~24 MB. The fly-by ships are left out
+of the web build.
 
 ```bash
+# (when a new set comes out) refresh the index of official card image URLs
+python -I tools/web/build_art_map.py
+```
+
+```bash
+# build build/web/ (and a zip); test locally at http://localhost:8060 with play.py
 python -I tools/web/build_web.py
 ```
 
-That exports `build/web/` and `build/SWU-Kyber-web.zip` (~150 MB). Unzip it
-anywhere, then double-click **Play SWU Kyber.bat** (Windows) or run
-`python3 play.py` (Mac/Linux). It starts a small local web server and opens
-the game at http://localhost:8060 (only reachable from your own computer).
-Saves live in the browser. Chrome, Edge, Firefox and Safari with WebGL 2 work.
+```bash
+# publish to GitHub Pages (branch gh-pages; one-time: Settings -> Pages -> gh-pages / root)
+python -I tools/web/publish_pages.py
+```
 
-> Keep the zip private: it contains Lucasfilm/FFG card art and text. Don't attach
-> it to a public GitHub release or host it on GitHub Pages.
+> Unofficial, non-commercial fan project. Not affiliated with Disney, Lucasfilm or
+> Fantasy Flight Games. Star Wars characters, cards, logos and art are property of
+> Disney and/or Fantasy Flight Games.
 
 ## Android app
 `python -I tools/android/build_android.py` builds a signed `build/android/swu_kyber.apk`
