@@ -15,6 +15,14 @@ var _waiting: Dictionary = {}     # key -> Array[Callable]
 var _queue: Array = []
 var placeholder: Texture2D
 var card_back: Texture2D
+## Web builds ship card art as separate files next to the page (art/<key>.kart)
+## instead of inside the game pack: the pack stays small enough for phones and
+## tablets, and only the art you actually look at is downloaded.
+var remote := false
+var _base_url := ""
+var _pool: Array = []          # idle HTTPRequest nodes
+var _busy: Dictionary = {}     # HTTPRequest -> key
+const PARALLEL := 6
 
 
 func _ready() -> void:
@@ -24,6 +32,17 @@ func _ready() -> void:
 	card_back = ui_texture("card_back")
 	if card_back == null:
 		card_back = placeholder
+	remote = OS.has_feature("web") and not FileAccess.file_exists(CARD_DIR + "SOR_095.kart")
+	if remote:
+		var u = JavaScriptBridge.eval("new URL('art/', window.location.href).href", true)
+		_base_url = str(u) if u != null else "art/"
+		for i in PARALLEL:
+			var h := HTTPRequest.new()
+			h.use_threads = false
+			h.timeout = 30.0
+			add_child(h)
+			h.request_completed.connect(_on_fetched.bind(h))
+			_pool.append(h)
 
 
 func key_for(art: String, back := false) -> String:
@@ -31,6 +50,8 @@ func key_for(art: String, back := false) -> String:
 
 
 func has_art(art: String, back := false) -> bool:
+	if remote:
+		return art != "" and not art.begins_with("KYB")
 	return FileAccess.file_exists(CARD_DIR + key_for(art, back) + ".kart")
 
 
@@ -50,12 +71,25 @@ func request(art: String, cb: Callable, back := false) -> Texture2D:
 ## Synchronous load (used for the inspect view, where we want it immediately).
 func get_now(art: String, back := false) -> Texture2D:
 	var key := key_for(art, back)
+	if remote:
+		if _cache.has(key):
+			return _cache[key]
+		request(art, func(_t): pass, back)
+		return placeholder
 	if not _cache.has(key):
 		_decode(key)
 	return _cache.get(key, placeholder)
 
 
 func _process(_dt: float) -> void:
+	if remote:
+		while not _queue.is_empty() and not _pool.is_empty():
+			var key: String = _queue.pop_front()
+			var h: HTTPRequest = _pool.pop_back()
+			_busy[h] = key
+			if h.request(_base_url + key.uri_encode() + ".kart") != OK:
+				_on_fetched(HTTPRequest.RESULT_CANT_CONNECT, 0, PackedStringArray(), PackedByteArray(), h)
+		return
 	var n := 0
 	while n < DECODES_PER_FRAME and not _queue.is_empty():
 		var key: String = _queue.pop_front()
@@ -66,6 +100,27 @@ func _process(_dt: float) -> void:
 				cb.call(tex)
 		_waiting.erase(key)
 		n += 1
+
+
+func _on_fetched(result: int, code: int, _headers: PackedStringArray, body: PackedByteArray, h: HTTPRequest) -> void:
+	var key: String = _busy.get(h, "")
+	_busy.erase(h)
+	_pool.append(h)
+	if key == "":
+		return
+	var tex: Texture2D = placeholder
+	if result == HTTPRequest.RESULT_SUCCESS and code == 200:
+		var img := Image.new()
+		if img.load_webp_from_buffer(body) == OK:
+			tex = ImageTexture.create_from_image(img)
+			_cache[key] = tex
+			_touch(key)
+			while _order.size() > MAX_CACHE:
+				_cache.erase(_order.pop_front())
+	for cb in _waiting.get(key, []):
+		if cb.is_valid():
+			cb.call(tex)
+	_waiting.erase(key)
 
 
 func _decode(key: String) -> void:

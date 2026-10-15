@@ -69,6 +69,13 @@ func _make_card() -> void:
 	add_child(_card)
 	var tex := Art.get_now(_card.data.get("art", _id), _back)
 	_card._tex = tex
+	if tex == Art.placeholder:
+		# streamed art (web): fill in when it arrives
+		var cv := _card
+		Art.request(_card.data.get("art", _id), func(t):
+			if is_instance_valid(cv):
+				cv._tex = t
+				cv.queue_redraw(), _back)
 	if _info:
 		_info.queue_free()
 	_info = _make_info()

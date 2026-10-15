@@ -1,13 +1,25 @@
 #!/usr/bin/env python3
-"""Exports the browser build and packages it as a private zip.
+"""Exports the browser build as an installable web app (PWA).
 
   python -I tools/web/build_web.py [path/to/godot]
 
-Output: build/web/ (index.html, .wasm, .pck, launcher) and
+Output: build/web/  - ready to host (Cloudflare Pages + Access) or run locally
         build/SWU-Kyber-web.zip  <- contains card art/text: keep it private.
+
+Every file stays under 25 MiB (Cloudflare Pages' per-file limit):
+  * card art is not packed into index.pck; it ships as art/<key>.kart and the
+    game fetches it on demand (autoload/art.gd "remote" mode),
+  * the engine is stored gzipped (index.wasm.gz.bin) and inflated in the browser
+    by a small fetch shim (DecompressionStream: Chrome 80+, Safari 16.4+, Firefox 113+).
+Godot's own PWA output supplies the icons; the manifest and service worker are
+replaced with ours (versioned core cache + a persistent art cache, so the app
+starts offline and only refreshes when a new build is deployed).
 Needs Godot 4.7.2 with export templates installed, and game/ip/ populated
 (tools/import_cards.py, convert_art.gd, build_assets.gd).
 """
+import gzip
+import hashlib
+import json
 import shutil
 import subprocess
 import sys
@@ -17,6 +29,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 GODOT = sys.argv[1] if len(sys.argv) > 1 else r"E:\godot-windows-64-stable\Godot_v4.7.2-stable_win64_console.exe"
 OUT = ROOT / "build" / "web"
+ART = ROOT / "game" / "ip" / "art" / "cards"
+LIMIT = 25 * 1024 * 1024
+WASM_GZ = "index.wasm.gz.bin"   # not ".gz": no host may serve it with Content-Encoding
 
 if not (ROOT / "game" / "ip" / "data" / "cards.json").exists():
     sys.exit("game/ip is empty - import the cards and art first (see README).")
@@ -27,8 +42,122 @@ subprocess.run([GODOT, "--headless", "--path", str(ROOT / "game"), "--import"], 
 r = subprocess.run([GODOT, "--headless", "--path", str(ROOT / "game"), "--export-release", "Web", str(OUT / "index.html")])
 if r.returncode != 0 or not (OUT / "index.pck").exists():
     sys.exit("export failed - are the 4.7.2 export templates installed?")
-for f in ("play.py", "Play SWU Kyber.bat"):
-    shutil.copy(ROOT / "tools" / "web" / f, OUT / f)
+
+# --- engine: gzip ------------------------------------------------------------
+wasm = OUT / "index.wasm"
+raw = wasm.read_bytes()
+(OUT / WASM_GZ).write_bytes(gzip.compress(raw, 9, mtime=0))
+wasm.unlink()
+
+# --- art: loose files ----------------------------------------------------------
+(OUT / "art").mkdir()
+for f in ART.glob("*.kart"):
+    shutil.copy2(f, OUT / "art" / f.name)
+
+version = hashlib.sha1(raw + (OUT / "index.pck").read_bytes()).hexdigest()[:12]
+
+# --- page: fetch shim + iOS/Android install metadata -------------------------
+SHIM = """<script>
+/* SWU Kyber: the engine is stored gzipped; inflate it on the fly. */
+(function () {
+	const realFetch = window.fetch.bind(window);
+	window.fetch = function (input, init) {
+		const url = typeof input === 'string' ? input : (input && input.url) || '';
+		if (/index\\.wasm(\\?|$)/.test(url)) {
+			return realFetch(url.replace(/index\\.wasm/, '%s'), init).then((r) => {
+				if (!r.ok) { return r; }
+				return new Response(r.body.pipeThrough(new DecompressionStream('gzip')),
+					{ status: 200, headers: { 'Content-Type': 'application/wasm' } });
+			});
+		}
+		return realFetch(input, init);
+	};
+}());
+</script>""" % WASM_GZ
+META = """<meta name="theme-color" content="#05080d">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SWU Kyber">
+<meta name="robots" content="noindex, nofollow">"""
+html = (OUT / "index.html").read_text(encoding="utf-8")
+html = html.replace('initial-scale=1.0">', 'initial-scale=1.0, viewport-fit=cover">', 1)
+assert '<script src="index.js"></script>' in html
+html = html.replace("</head>", META + "\n" + SHIM + "\n</head>", 1)
+(OUT / "index.html").write_text(html, encoding="utf-8")
+
+icons = [{"src": p.name, "sizes": p.name.split(".")[1], "type": "image/png", "purpose": "any"}
+         for p in sorted(OUT.glob("index.*x*.png"))]
+(OUT / "index.manifest.json").write_text(json.dumps({
+    "id": "./", "name": "SWU Kyber", "short_name": "Kyber",
+    "description": "Unofficial fan-made Star Wars: Unlimited card game.",
+    "start_url": "./index.html", "scope": "./", "display": "fullscreen",
+    "display_override": ["fullscreen", "standalone"], "orientation": "any",
+    "background_color": "#05080d", "theme_color": "#05080d", "icons": icons,
+}, indent=1), encoding="utf-8")
+
+core = ["index.html", "index.js", WASM_GZ, "index.pck", "index.manifest.json", "index.offline.html",
+        "index.audio.worklet.js", "index.audio.position.worklet.js", "index.icon.png",
+        "index.apple-touch-icon.png", "index.png"] + [i["src"] for i in icons]
+core = [c for c in core if (OUT / c).exists()]
+SW = """// SWU Kyber service worker (generated by tools/web/build_web.py).
+// Core files are cached per build: a new deploy changes VERSION, the new
+// worker downloads the new build in the background and takes over next launch.
+// Card art lives in its own cache that survives updates.
+const VERSION = '%s';
+const CORE = 'kyber-core-' + VERSION;
+const ART = 'kyber-art-v1';
+const FILES = %s;
+
+self.addEventListener('install', (e) => {
+	e.waitUntil(caches.open(CORE).then((c) => c.addAll(FILES)).then(() => self.skipWaiting()));
+});
+self.addEventListener('activate', (e) => {
+	e.waitUntil(caches.keys().then((keys) => Promise.all(keys
+		.filter((k) => k.startsWith('kyber-core-') && k !== CORE).map((k) => caches.delete(k))))
+		.then(() => self.clients.claim()));
+});
+self.addEventListener('message', (e) => { if (e.data === 'update') { self.skipWaiting(); } });
+
+function cacheFirst(cacheName, req) {
+	return caches.open(cacheName).then((c) => c.match(req, { ignoreSearch: true }).then((hit) => hit ||
+		fetch(req).then((res) => {
+			if (res.ok && res.type === 'basic') { c.put(req, res.clone()); }
+			return res;
+		})));
+}
+
+self.addEventListener('fetch', (e) => {
+	const req = e.request;
+	if (req.method !== 'GET') { return; }
+	const url = new URL(req.url);
+	if (url.origin !== self.location.origin) { return; }
+	const path = url.pathname.replace(/^.*\\//, '');
+	if (req.mode === 'navigate') {
+		// always try the network first (picks up new builds and the sign-in page)
+		e.respondWith(fetch(req).catch(() => caches.match('index.html', { ignoreSearch: true })
+			.then((r) => r || caches.match('index.offline.html'))));
+	} else if (url.pathname.includes('/art/')) {
+		e.respondWith(cacheFirst(ART, req));
+	} else if (FILES.includes(path)) {
+		e.respondWith(cacheFirst(CORE, req));
+	}
+});
+""" % (version, json.dumps(core))
+(OUT / "index.service.worker.js").write_text(SW, encoding="utf-8")
+
+# Cloudflare Pages response headers (ignored by the local launcher)
+(OUT / "_headers").write_text(
+    "/*\n  X-Robots-Tag: noindex, nofollow\n"
+    "/index.service.worker.js\n  Cache-Control: no-cache\n"
+    "/index.html\n  Cache-Control: no-cache\n"
+    "/art/*\n  Cache-Control: public, max-age=2592000\n  Content-Type: application/octet-stream\n", encoding="utf-8")
+(OUT / "robots.txt").write_text("User-agent: *\nDisallow: /\n", encoding="utf-8")
+
+# --- local launcher + private zip -------------------------------------------
+for f in ("play.py", "Play SWU Kyber.bat", "Play on Phone (same Wi-Fi).bat"):
+    if (ROOT / "tools" / "web" / f).exists():
+        shutil.copy(ROOT / "tools" / "web" / f, OUT / f)
 (OUT / "README.txt").write_text(
     "SWU Kyber - browser build (unofficial, non-commercial fan project)\n\n"
     "Windows: double-click 'Play SWU Kyber.bat'.\n"
@@ -36,9 +165,16 @@ for f in ("play.py", "Play SWU Kyber.bat"):
     "Then play at http://localhost:8060 (it opens automatically).\n\n"
     "Contains Star Wars: Unlimited card art and text (Lucasfilm Ltd. / Fantasy Flight Games).\n"
     "For personal use only - do not upload or share publicly.\n", encoding="utf-8")
+
+big = [p for p in OUT.rglob("*") if p.is_file() and p.stat().st_size > LIMIT]
+if big:
+    sys.exit("files over 25 MiB (Cloudflare limit): " + ", ".join(f"{p.name} {p.stat().st_size / 1e6:.0f} MB" for p in big))
 zp = ROOT / "build" / "SWU-Kyber-web.zip"
 with zipfile.ZipFile(zp, "w", zipfile.ZIP_DEFLATED) as z:
     for p in OUT.rglob("*"):
         z.write(p, Path("SWU-Kyber-web") / p.relative_to(OUT))
-size = sum(p.stat().st_size for p in OUT.rglob("*")) / 1e6
-print(f"web build: {OUT}  ({size:.0f} MB)\nzip: {zp}  ({zp.stat().st_size / 1e6:.0f} MB)")
+files = list(OUT.rglob("*"))
+size = sum(p.stat().st_size for p in files if p.is_file()) / 1e6
+print(f"web build {version}: {OUT}  ({size:.0f} MB, {len(files)} files)")
+print(f"  pck {(OUT / 'index.pck').stat().st_size / 1e6:.1f} MB, engine {(OUT / WASM_GZ).stat().st_size / 1e6:.1f} MB gz")
+print(f"zip: {zp}  ({zp.stat().st_size / 1e6:.0f} MB)")
